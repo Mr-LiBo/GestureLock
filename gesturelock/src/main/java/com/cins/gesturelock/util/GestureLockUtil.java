@@ -67,18 +67,9 @@ public class GestureLockUtil {
         return Math.sqrt((sx - x + offset) * (sx - x + offset) + (sy - y + offset) * (sy - y + offset)) < r;
     }
 
-    /**
-     * get distance between two points
-     *
-     * @param fpX first point x position
-     * @param fpY first point y position
-     * @param spX second point x position
-     * @param spY second point y position
-     * @return
-     */
 
     /**
-     * get the angle which the line intersect x axis
+     * get distance between two points
      *
      * @param fpX
      * @param fpY
@@ -90,6 +81,18 @@ public class GestureLockUtil {
         return (float) Math.sqrt((spX - fpX) * (spX - fpX) + (spY - fpY) * (spY - fpY));
     }
 
+    /**
+     * get the angle which the line intersect x axis
+     * @param fpX
+     * @param fpY
+     * @param spX
+     * @param spY
+     * @param distance
+     * @return
+     */
+    public static float getAngleLineIntersectX(float fpX, float fpY, float spX, float spY, float distance) {
+        return (float) Math.toDegrees(Math.acos((spX - fpX) / distance));
+    }
     /**
      * get the angle which the line intersect y axis
      *
