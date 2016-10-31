@@ -5,9 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
 import com.cins.gesturelockdemo.R;
@@ -34,8 +32,8 @@ public class SplashActivity extends AppCompatActivity {
     private Handler handler = new Handler(){};
 
     @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
         init();
@@ -44,15 +42,18 @@ public class SplashActivity extends AppCompatActivity {
     private void init() {
         mACache = ACache.get(this);
 
-        DisplayMetrics dm = new DisplayMetrics();
+        /*DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         screenWidth = dm.widthPixels;
-        screenHeight = dm.heightPixels;
+        screenHeight = dm.heightPixels;*/
+
+        screenWidth = getWindowManager().getDefaultDisplay().getWidth();
+        screenHeight = getWindowManager().getDefaultDisplay().getHeight();
 
         splashBitmap = BitmapUtil.resizeBitmap(screenWidth, screenHeight - getStatusBarHeight(),
                 BitmapFactory.decodeResource(getResources(), R.mipmap.splash));
         splashIv.setImageBitmap(splashBitmap);
-        doJump();
+        this.doJump();
     }
 
     private void doJump() {

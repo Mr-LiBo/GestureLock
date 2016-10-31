@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.HapticFeedbackConstants;
@@ -50,7 +51,7 @@ public class GestureLockView extends View{
     private static final double CONSTANT_COS_30 = Math.cos(Math.toRadians(30));
 
     public GestureLockView(Context context) {
-        super(context);
+        super(context,null);
     }
 
     public GestureLockView(Context context, AttributeSet attrs) {
@@ -104,20 +105,20 @@ public class GestureLockView extends View{
         for(int i = 0; i< mCells.length; i++){
             for(int j = 0; j < mCells[i].length; j++){
                 if(mCells[i][j].getStatus() == Cell.STATE_CHECK){
-                    selectPaint.setStyle(Paint.Style.STROKE);
+                    selectPaint.setStyle(Style.STROKE);
                     canvas.drawCircle(mCells[i][j].getX(), mCells[i][j].getY(),
                             this.cellRadius, this.selectPaint);
-                    selectPaint.setStyle(Paint.Style.FILL);
+                    selectPaint.setStyle(Style.FILL);
                     canvas.drawCircle(mCells[i][j].getX(), mCells[i][j].getY(),
                             this.cellInnerRadius, this.selectPaint);
                 } else if(mCells[i][j].getStatus() == Cell.STATE_NORMAL){
                     canvas.drawCircle(mCells[i][j].getX(), mCells[i][j].getY(),
                             this.cellRadius, this.defaultPaint);
                 } else if(mCells[i][j].getStatus() == Cell.STATE_CHECK_ERROR){
-                    errorPaint.setStyle(Paint.Style.STROKE);
+                    errorPaint.setStyle(Style.STROKE);
                     canvas.drawCircle(mCells[i][j].getX(), mCells[i][j].getY(),
                             this.cellRadius, this.errorPaint);
-                    errorPaint.setStyle(Paint.Style.FILL);
+                    errorPaint.setStyle(Style.FILL);
                     canvas.drawCircle(mCells[i][j].getX(), mCells[i][j].getY(),
                             this.cellInnerRadius, this.errorPaint);
                 }
@@ -182,8 +183,8 @@ public class GestureLockView extends View{
         int distance = this.cellBoxWidth + this.cellBoxWidth/2 - this.cellRadius;
         for(int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                mCells[i][j].setX(distance * j + cellRadius + offset);
-                mCells[i][j].setY(distance * i + cellRadius + offset);
+                mCells[i][j].setX(distance*j + cellRadius + offset);
+                mCells[i][j].setY(distance*i + cellRadius + offset);
             }
         }
     }
@@ -562,7 +563,7 @@ public class GestureLockView extends View{
         mEnableHapticFeedback = tactileFeedbackEnabled;
     }
 
-    public void setOnPatternListener(OnGestureListener gestureListener){
+    public void setOnGestureListener(OnGestureListener gestureListener){
         this.gestureListener = gestureListener;
     }
 

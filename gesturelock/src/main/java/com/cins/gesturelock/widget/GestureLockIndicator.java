@@ -3,6 +3,7 @@ package com.cins.gesturelock.widget;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -85,13 +86,13 @@ public class GestureLockIndicator extends View{
         defaultPaint = new Paint();
         defaultPaint.setColor(getResources().getColor(R.color.grey_b2b2b2));
         defaultPaint.setStrokeWidth(3.0f);
-        defaultPaint.setStyle(Paint.Style.STROKE);
+        defaultPaint.setStyle(Style.STROKE);
         defaultPaint.setAntiAlias(true);
 
         selectPaint = new Paint();
         selectPaint.setColor(getResources().getColor(R.color.blue_01aaee));
         selectPaint.setStrokeWidth(3.0f);
-        selectPaint.setStyle(Paint.Style.FILL);
+        selectPaint.setStyle(Style.FILL);
         selectPaint.setAntiAlias(true);
     }
 
