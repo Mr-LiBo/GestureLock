@@ -1,6 +1,7 @@
 package com.cins.gesturelockdemo.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
@@ -25,7 +26,7 @@ import butterknife.OnClick;
  * Created by Eric on 2016/10/31.
  */
 
-public class CreateGestureActivity extends Activity{
+public class CreateGestureActivity extends Activity {
 
     @Bind(R.id.GestureLockIndicator)
     GestureLockIndicator mGestureLockIndicator;
@@ -137,6 +138,8 @@ public class CreateGestureActivity extends Activity{
      */
     private void setLockGestureSuccess() {
         Toast.makeText(this, "create gesture success", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, Main2Activity.class);
+        startActivity(intent);
     }
 
     /**

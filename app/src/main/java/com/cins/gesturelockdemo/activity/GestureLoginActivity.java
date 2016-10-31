@@ -1,6 +1,5 @@
 package com.cins.gesturelockdemo.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -23,7 +22,7 @@ import butterknife.OnClick;
  * Created by Eric on 2016/10/31.
  */
 
-public class GestureLoginActivity extends Activity {
+public class GestureLoginActivity extends BaseActivity {
 
     @Bind(R.id.GestureLockView)
     GestureLockView mGestureLockView;
@@ -100,6 +99,8 @@ public class GestureLoginActivity extends Activity {
      */
     private void loginGestureSuccess() {
         Toast.makeText(GestureLoginActivity.this, "success", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, Main2Activity.class);
+        startActivity(intent);
     }
 
     /**
@@ -128,4 +129,8 @@ public class GestureLoginActivity extends Activity {
         private int colorId;
     }
 
+    @Override
+    protected boolean shouldCheckGesturePass() {
+        return false;
+    }
 }
