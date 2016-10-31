@@ -1,5 +1,6 @@
 package com.cins.gesturelock.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -16,6 +17,7 @@ import com.cins.gesturelock.util.GestureLockUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  *
@@ -51,11 +53,11 @@ public class GestureLockView extends View{
     private static final double CONSTANT_COS_30 = Math.cos(Math.toRadians(30));
 
     public GestureLockView(Context context) {
-        super(context,null);
+        this(context, null);
     }
 
     public GestureLockView(Context context, AttributeSet attrs) {
-        super(context, attrs, 0);
+        this(context, attrs, 0);
     }
 
     public GestureLockView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -66,7 +68,7 @@ public class GestureLockView extends View{
     /**
      * initialize
      */
-    private void init() {
+    private void init(){
         this.initCellSize();
         this.init9Cells();
         this.initPaints();
@@ -80,20 +82,19 @@ public class GestureLockView extends View{
         this.drawToCanvas(canvas);
     }
 
-
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         getMeasuredHeight();
-        width = getMeasuredWidth();
-        height = getMeasuredHeight();
+        this.width = getMeasuredWidth();
+        this.height = getMeasuredHeight();
         //Log.e(TAG, "(width: " + width + "  ,  height" + height + ")");
         if (width != height) {
             throw new IllegalArgumentException("the width must be equals height");
         }
-        initCellSize();
-        set9CellsSize();
-        invalidate();
+        this.initCellSize();
+        this.set9CellsSize();
+        this.invalidate();
     }
 
     /**
@@ -151,11 +152,37 @@ public class GestureLockView extends View{
             }
         }
     }
+
+    /**
+     * initialize the view size (include the view width and the view height fro the AttributeSet)
+     * @param context
+     * @param attrs
+     */
+    @Deprecated
+    private void initViewSize(Context context, AttributeSet attrs){
+        for(int i = 0; i < attrs.getAttributeCount(); i ++){
+            String name = attrs.getAttributeName(i);
+            if("layout_width".equals(name)){
+                String value = attrs.getAttributeValue(i);
+                this.width = GestureLockUtil.changeSize(context, value);
+            }
+            if("layout_height".equals(attrs.getAttributeName(i))){
+                String value = attrs.getAttributeValue(i);
+                this.height = GestureLockUtil.changeSize(context, value);
+            }
+        }
+        //check the width is or not equals height.
+        //if not throw exception
+        if (this.width != this.height) {
+            throw new IllegalArgumentException("the width must be equals height");
+        }
+    }
+
     /**
      * initialize cell size (include circle radius, inner circle radius,
      * cell box width, cell box height)
      */
-    private void initCellSize() {
+    private void initCellSize(){
         this.cellRadius = (this.width - offset * 2)/4/2;
         this.cellInnerRadius = this.cellRadius/3;
         this.cellBoxWidth = (this.width - offset * 2)/3;
@@ -165,13 +192,13 @@ public class GestureLockView extends View{
     /**
      * initialize nine cells
      */
-    private void init9Cells() {
+    private void init9Cells(){
         //the distance between the center of two circles
         int distance = this.cellBoxWidth + this.cellBoxWidth/2 - this.cellRadius;
-        for (int i = 0; i < 3; i++) {
+        for(int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                mCells[i][j] = new Cell(distance * j + cellRadius + offset,
-                        distance * i + cellRadius + offset, i, j, 3 * i + j + 1);
+                mCells[i][j] = new Cell(distance*j + cellRadius + offset,
+                        distance*i + cellRadius + offset, i, j, 3*i + j + 1);
             }
         }
     }
@@ -196,7 +223,7 @@ public class GestureLockView extends View{
         defaultPaint = new Paint();
         defaultPaint.setColor(getResources().getColor(R.color.blue_78d2f6));
         defaultPaint.setStrokeWidth(2.0f);
-        defaultPaint.setStyle(Paint.Style.STROKE);
+        defaultPaint.setStyle(Style.STROKE);
         defaultPaint.setAntiAlias(true);
 
         selectPaint = new Paint();
@@ -226,6 +253,15 @@ public class GestureLockView extends View{
         triangleMatrix = new Matrix();
     }
 
+
+
+    /**
+     * draw line not include circle (check whether the cell between two cells )
+     * @param preCell
+     * @param nextCell
+     * @param canvas
+     * @param paint
+     */
     private void drawLine(Cell preCell, Cell nextCell, Canvas canvas, Paint paint) {
         Cell centerCell = getCellBetweenTwoCells(preCell, nextCell);
         if(centerCell != null && sCells.contains(centerCell)) {
@@ -236,14 +272,30 @@ public class GestureLockView extends View{
         }
     }
 
-
-
     /**
-     * get the cell between two cells (it has the limitation: the gesture must be 3x3)
-     *
+     * draw line not include circle (the line do not show inside the circle)
      * @param preCell
      * @param nextCell
-     * @return
+     * @param canvas
+     * @param paint
+     */
+    private void drawLineNotIncludeCircle(Cell preCell, Cell nextCell, Canvas canvas, Paint paint) {
+        float distance = GestureLockUtil.getDistanceBetweenTwoPoints(
+                preCell.getX(), preCell.getY(), nextCell.getX(), nextCell.getY());
+        float x1 = this.cellRadius / distance * (nextCell.getX() - preCell.getX()) + preCell.getX();
+        float y1 = this.cellRadius / distance * (nextCell.getY() - preCell.getY()) + preCell.getY() ;
+        float x2 = (distance - this.cellRadius) / distance *
+                (nextCell.getX() - preCell.getX()) + preCell.getX();
+        float y2 = (distance - this.cellRadius) / distance *
+                (nextCell.getY() - preCell.getY()) + preCell.getY();
+        canvas.drawLine(x1, y1, x2, y2, paint);
+    }
+
+    /**
+     * get the cell between two cells (it has the limitation: the pattern must be 3x3)
+     * @param preCell previous cell
+     * @param nextCell next cell
+     * @return Cell
      */
     private Cell getCellBetweenTwoCells(Cell preCell, Cell nextCell) {
         //two cells are in the same row
@@ -272,25 +324,6 @@ public class GestureLockView extends View{
     }
 
     /**
-     * draw line not include circle (the line do not show inside the circle)
-     * @param preCell
-     * @param nextCell
-     * @param canvas
-     * @param paint
-     */
-    private void drawLineNotIncludeCircle(Cell preCell, Cell nextCell, Canvas canvas, Paint paint) {
-        float distance = GestureLockUtil.getDistanceBetweenTwoPoints(
-                preCell.getX(), preCell.getY(), nextCell.getX(), nextCell.getY());
-        float x1 = this.cellRadius / distance * (nextCell.getX() - preCell.getX()) + preCell.getX();
-        float y1 = this.cellRadius / distance * (nextCell.getY() - preCell.getY()) + preCell.getY() ;
-        float x2 = (distance - this.cellRadius) / distance *
-                (nextCell.getX() - preCell.getX()) + preCell.getX();
-        float y2 = (distance - this.cellRadius) / distance *
-                (nextCell.getY() - preCell.getY()) + preCell.getY();
-        canvas.drawLine(x1, y1, x2, y2, paint);
-    }
-
-    /**
      * draw line follow finger
      * (do not draw line inside the selected cell,
      * but it is only the starting cell not the other's cell)
@@ -307,6 +340,61 @@ public class GestureLockView extends View{
             canvas.drawLine(x1, y1, movingX, movingY, paint);
         }
     }
+
+    /**
+     * draw triangle
+     * @param preCell the previous selected cell
+     * @param nextCell the next selected cell
+     * @param canvas
+     * @param paint
+     */
+    @Deprecated
+	/*private void drawTriangle(Cell preCell, Cell nextCell, Canvas canvas, Paint paint) {
+		float distance = LockPatternUtil.getDistanceBetweenTwoPoints
+				(preCell.getX(), preCell.getY(), nextCell.getX(), nextCell.getY());
+		float x = this.cellInnerRadius * 2 / distance * (nextCell.getX() - preCell.getX()) + preCell.getX();
+		float y = this.cellInnerRadius * 2 / distance * (nextCell.getY() - preCell.getY()) + preCell.getY();
+
+		float angleX = LockPatternUtil.getAngleLineIntersectX(
+				preCell.getX(), preCell.getY(), nextCell.getX(), nextCell.getY(), distance);
+		float angleY = LockPatternUtil.getAngleLineIntersectY(
+				preCell.getX(), preCell.getY(), nextCell.getX(), nextCell.getY(), distance);
+		float x1, y1, x2, y2;
+		//slide right down
+		if (angleX >= 0 && angleX <= 90 && angleY >=0 && angleY <= 90 ) {
+			x1 = x - (float)(cellInnerRadius * Math.cos(Math.toRadians(angleX - 30)));
+			y1 = y - (float)(cellInnerRadius * Math.sin(Math.toRadians(angleX - 30)));
+			x2 = x - (float)(cellInnerRadius * Math.sin(Math.toRadians(angleY - 30)));
+			y2 = y - (float)(cellInnerRadius * Math.cos(Math.toRadians(angleY - 30)));
+		}
+		//slide right up
+		else if (angleX >= 0 && angleX <= 90 && angleY > 90 && angleY <= 180) {
+			x1 = x - (float)(cellInnerRadius * Math.cos(Math.toRadians(angleX + 30)));
+			y1 = y + (float)(cellInnerRadius * Math.sin(Math.toRadians(angleX + 30)));
+			x2 = x - (float)(cellInnerRadius * Math.sin(Math.toRadians(180 - angleY + 30)));
+			y2 = y + (float)(cellInnerRadius * Math.cos(Math.toRadians(180 - angleY + 30)));
+		}
+		//slide left up
+		else if (angleX > 90 && angleX <= 180 && angleY >= 90 && angleY < 180) {
+			x1 = x + (float)(cellInnerRadius * Math.cos(Math.toRadians(180 - angleX - 30)));
+			y1 = y + (float)(cellInnerRadius * Math.sin(Math.toRadians(180 - angleX - 30)));
+			x2 = x + (float)(cellInnerRadius * Math.sin(Math.toRadians(180 - angleY - 30)));
+			y2 = y + (float)(cellInnerRadius * Math.cos(Math.toRadians(180 - angleY - 30)));
+		}
+		//slide left down
+		else {
+			x1 = x + (float)(cellInnerRadius * Math.cos(Math.toRadians(180 - angleX + 30)));
+			y1 = y - (float)(cellInnerRadius * Math.sin(Math.toRadians(180 - angleX + 30)));
+			x2 = x + (float)(cellInnerRadius * Math.sin(Math.toRadians(angleY + 30)));
+			y2 = y - (float)(cellInnerRadius * Math.cos(Math.toRadians(angleY + 30)));
+		}
+		trianglePath.reset();
+		trianglePath.moveTo(x, y);
+		trianglePath.lineTo(x1, y1);
+		trianglePath.lineTo(x2, y2);
+		trianglePath.close();
+		canvas.drawPath(trianglePath, paint);
+	}*/
 
     /**
      * draw new triangle
@@ -348,9 +436,10 @@ public class GestureLockView extends View{
         canvas.drawPath(trianglePath, paint);
     }
 
-
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
         float ex = event.getX();
         float ey = event.getY();
 
@@ -378,7 +467,7 @@ public class GestureLockView extends View{
         isActionDown = true;
         isActionUp = false;
 
-        setGesture(DisplayMode.DEFAULT);
+        this.setGesture(DisplayMode.DEFAULT);
 
         if(this.gestureListener != null) {
             this.gestureListener.onGestureStart();
@@ -464,8 +553,10 @@ public class GestureLockView extends View{
         }
     }
 
+
+
     /**
-     * the display mode of the gesture
+     * the display mode of the pattern
      */
     public enum DisplayMode {
         //show default pattern (the default pattern is initialize status)
@@ -475,8 +566,9 @@ public class GestureLockView extends View{
         //show selected pattern error
         ERROR;
     }
+
     /**
-     * set gesture
+     * set pattern
      * @param mode (details see the DisplayMode)
      */
     public void setGesture(DisplayMode mode) {
@@ -497,6 +589,7 @@ public class GestureLockView extends View{
         }
         this.handleStealthMode();
     }
+
     /**
      * handle the stealth mode (if true: do not post invalidate; false: post invalidate)
      */
@@ -514,7 +607,7 @@ public class GestureLockView extends View{
     }
 
     /**
-     * delay clear gesture
+     * delay clear pattern
      * @param delay the delay time (if delay less than 0, it will be 600L)
      */
     public void postClearPatternRunnable(long delay) {
@@ -563,16 +656,19 @@ public class GestureLockView extends View{
         mEnableHapticFeedback = tactileFeedbackEnabled;
     }
 
-    public void setOnGestureListener(OnGestureListener gestureListener){
-        this.gestureListener = gestureListener;
+    public void setOnGestureListener(OnGestureListener patternListener){
+        this.gestureListener = patternListener;
     }
 
+    /**
+     * callback interface
+     */
     public static interface OnGestureListener {
         public void onGestureStart();
         public void onGestureComplete(List<Cell> cells);
     }
 
-    public class Cell{
+    public class Cell {
 
         private int x;// the x position of circle's center point
         private int y;// the y position of circle's center point
@@ -589,8 +685,6 @@ public class GestureLockView extends View{
         public static final int STATE_CHECK_ERROR = 2;
 
         public Cell(){}
-
-
 
         public Cell(int x, int y, int row, int column, int index){
             this.x = x;
@@ -635,5 +729,6 @@ public class GestureLockView extends View{
         public void setStatus(int status){
             this.status = status;
         }
+
     }
 }
