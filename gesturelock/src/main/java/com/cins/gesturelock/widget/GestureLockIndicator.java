@@ -17,7 +17,7 @@ import java.util.List;
  * Created by Eric on 2016/10/30.
  */
 
-public class GestureLockIndicator extends View{
+public class GestureLockIndicator extends View {
 
 
     private int width, height;
@@ -42,7 +42,7 @@ public class GestureLockIndicator extends View{
         this.init();
     }
 
-    private void init(){
+    private void init() {
         //initViewSize(context, attrs);
         initRadius();
         initPaint();
@@ -51,35 +51,36 @@ public class GestureLockIndicator extends View{
 
     /**
      * init view size
+     *
      * @param context
      * @param attrs
      */
     @Deprecated
-	private void initViewSize(Context context, AttributeSet attrs){
-		for(int i = 0; i < attrs.getAttributeCount(); i ++){
-			String name = attrs.getAttributeName(i);
-			if("layout_width".equals(name)){
-				String value = attrs.getAttributeValue(i);
-				this.width = GestureLockUtil.changeSize(context, value);
-				//Log.e(TAG, "layout_width:" + value);
-			}
-			if("layout_height".equals(attrs.getAttributeName(i))){
-				String value = attrs.getAttributeValue(i);
-				this.height = GestureLockUtil.changeSize(context, value);
-				//Log.e(TAG, "layout_height:" + value);
-			}
-		}
-		//check the width is or not equals height
-		//if not throw exception
-		if (this.width != this.height) {
-			throw new IllegalArgumentException("the width must be equals height");
-		}
-	}
+    private void initViewSize(Context context, AttributeSet attrs) {
+        for (int i = 0; i < attrs.getAttributeCount(); i++) {
+            String name = attrs.getAttributeName(i);
+            if ("layout_width".equals(name)) {
+                String value = attrs.getAttributeValue(i);
+                this.width = GestureLockUtil.changeSize(context, value);
+                //Log.e(TAG, "layout_width:" + value);
+            }
+            if ("layout_height".equals(attrs.getAttributeName(i))) {
+                String value = attrs.getAttributeValue(i);
+                this.height = GestureLockUtil.changeSize(context, value);
+                //Log.e(TAG, "layout_height:" + value);
+            }
+        }
+        //check the width is or not equals height
+        //if not throw exception
+        if (this.width != this.height) {
+            throw new IllegalArgumentException("the width must be equals height");
+        }
+    }
 
     private void initRadius() {
-        this.radius = (this.width - offset*2)/4/2;
-        this.cellBoxHeight = (this.height - offset*2)/3;
-        this.cellBoxWidth = (this.width - offset*2)/3;
+        this.radius = (this.width - offset * 2) / 4 / 2;
+        this.cellBoxHeight = (this.height - offset * 2) / 3;
+        this.cellBoxWidth = (this.width - offset * 2) / 3;
     }
 
     private void initPaint() {
@@ -99,11 +100,11 @@ public class GestureLockIndicator extends View{
     /**
      * initialize nine cells
      */
-    private void init9IndicatorCells(){
-        int distance = this.cellBoxWidth + this.cellBoxWidth/2 - this.radius;
-        for(int i = 0; i < 3; i++) {
+    private void init9IndicatorCells() {
+        int distance = this.cellBoxWidth + this.cellBoxWidth / 2 - this.radius;
+        for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                mIndicatorCells[i][j] = new IndicatorCell(distance*j + radius + offset, distance*i + radius + offset, 3*i + j + 1);
+                mIndicatorCells[i][j] = new IndicatorCell(distance * j + radius + offset, distance * i + radius + offset, 3 * i + j + 1);
             }
         }
     }
@@ -112,23 +113,24 @@ public class GestureLockIndicator extends View{
      * set nine indicator cells size
      */
     private void set9IndicatorCellsSize() {
-        int distance = this.cellBoxWidth + this.cellBoxWidth/2 - this.radius;
-        for(int i = 0; i < 3; i++) {
+        int distance = this.cellBoxWidth + this.cellBoxWidth / 2 - this.radius;
+        for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                mIndicatorCells[i][j].setX(distance*j + radius + offset);
-                mIndicatorCells[i][j].setY(distance*i + radius + offset);
+                mIndicatorCells[i][j].setX(distance * j + radius + offset);
+                mIndicatorCells[i][j].setY(distance * i + radius + offset);
             }
         }
     }
 
     /**
      * set indicator
+     *
      * @param cells
      */
     public void setIndicator(List<GestureLockView.Cell> cells) {
-        for(GestureLockView.Cell cell : cells) {
-            for(int i = 0; i < mIndicatorCells.length; i++) {
-                for(int j = 0; j < mIndicatorCells[i].length; j++) {
+        for (GestureLockView.Cell cell : cells) {
+            for (int i = 0; i < mIndicatorCells.length; i++) {
+                for (int j = 0; j < mIndicatorCells[i].length; j++) {
                     if (cell.getIndex() == mIndicatorCells[i][j].getIndex()) {
                         //Log.e(TAG, String.valueOf(cell.getRow() * 3 + cell.getColumn() + 1));
                         mIndicatorCells[i][j].setStatus(IndicatorCell.STATE_CHECK);
@@ -143,8 +145,8 @@ public class GestureLockIndicator extends View{
      * set default indicator
      */
     public void setDefaultIndicator() {
-        for(int i = 0; i < mIndicatorCells.length; i++) {
-            for(int j = 0; j < mIndicatorCells[i].length; j++) {
+        for (int i = 0; i < mIndicatorCells.length; i++) {
+            for (int j = 0; j < mIndicatorCells[i].length; j++) {
                 mIndicatorCells[i][j].setStatus(IndicatorCell.STATE_NORMAL);
             }
         }
@@ -172,14 +174,15 @@ public class GestureLockIndicator extends View{
 
     /**
      * draw the view to canvas
+     *
      * @param canvas
      */
     private void drawToCanvas(Canvas canvas) {
-        for(int i = 0; i < mIndicatorCells.length; i++) {
-            for(int j = 0; j < mIndicatorCells[i].length; j++) {
-                if(mIndicatorCells[i][j].getStatus() == IndicatorCell.STATE_NORMAL) {
+        for (int i = 0; i < mIndicatorCells.length; i++) {
+            for (int j = 0; j < mIndicatorCells[i].length; j++) {
+                if (mIndicatorCells[i][j].getStatus() == IndicatorCell.STATE_NORMAL) {
                     canvas.drawCircle(mIndicatorCells[i][j].getX(), mIndicatorCells[i][j].getY(), radius, defaultPaint);
-                } else if(mIndicatorCells[i][j].getStatus() == IndicatorCell.STATE_CHECK) {
+                } else if (mIndicatorCells[i][j].getStatus() == IndicatorCell.STATE_CHECK) {
                     canvas.drawCircle(mIndicatorCells[i][j].getX(), mIndicatorCells[i][j].getY(), radius, selectPaint);
                 }
             }
@@ -195,15 +198,16 @@ public class GestureLockIndicator extends View{
         public static final int STATE_NORMAL = 0;
         public static final int STATE_CHECK = 1;
 
-        public IndicatorCell(){}
+        public IndicatorCell() {
+        }
 
-        public IndicatorCell(int x, int y, int index){
+        public IndicatorCell(int x, int y, int index) {
             this.x = x;
             this.y = y;
             this.index = index;
         }
 
-        public int getX(){
+        public int getX() {
             return this.x;
         }
 
@@ -211,7 +215,7 @@ public class GestureLockIndicator extends View{
             this.x = x;
         }
 
-        public int getY(){
+        public int getY() {
             return this.y;
         }
 
@@ -219,11 +223,11 @@ public class GestureLockIndicator extends View{
             this.y = y;
         }
 
-        public int getStatus(){
+        public int getStatus() {
             return this.status;
         }
 
-        public void setStatus(int status){
+        public void setStatus(int status) {
             this.status = status;
         }
 
@@ -235,4 +239,7 @@ public class GestureLockIndicator extends View{
             this.index = index;
         }
     }
+
+
+
 }
